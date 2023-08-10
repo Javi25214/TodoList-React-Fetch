@@ -1,26 +1,52 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+const App = () => {
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState('');
 
-//create your first component
-const Home = () => {
-	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
-		</div>
-	);
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('/api/tasks');
+      const data = await response.json();
+      setTasks(data);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  };
+
+  const addTask = async () => {
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ task: newTask })
+      });
+      const data = await response.json();
+      setTasks([...tasks, data]);
+      setNewTask('');
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Todolist App</h1>
+      <input type="text" value={newTask} onChange={e => setNewTask(e.target.value)} />
+      <button onClick={addTask}>Add Task</button>
+      <ul>
+        {tasks.map(task => (
+          <li key={task.id}>{task.task}</li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
-export default Home;
+export default App;
