@@ -10,7 +10,7 @@ const App = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch('/api/tasks');
+      const response = await fetch('https://jsonplaceholder.typicode.com/todos');
       const data = await response.json();
       setTasks(data);
     } catch (error) {
@@ -20,12 +20,12 @@ const App = () => {
 
   const addTask = async () => {
     try {
-      const response = await fetch('/api/tasks', {
+      const response = await fetch('https://jsonplaceholder.typicode.com/todos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ task: newTask })
+        body: JSON.stringify({ title: newTask, completed: false })
       });
       const data = await response.json();
       setTasks([...tasks, data]);
@@ -42,7 +42,7 @@ const App = () => {
       <button onClick={addTask}>Add Task</button>
       <ul>
         {tasks.map(task => (
-          <li key={task.id}>{task.task}</li>
+          <li key={task.id}>{task.title}</li>
         ))}
       </ul>
     </div>
